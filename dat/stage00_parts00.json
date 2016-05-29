@@ -1,0 +1,17 @@
+{
+  "name": "Natsuki",
+  "StageScript":{
+    "parts_0000": {
+      "_use": true,
+      "_time": 50,
+      "_func": "function( _s, _e ){ var _tmp; for ( var i = 0; i < 3; i++ ){ _tmp = GetNoUseEnemy(); if ( _tmp !== null ){ _tmp._params._use = true; _tmp.tl.clear(); _tmp.tl.moveTo( 50.0 + (50.0 * i), 5.0, 0.0).moveBy( 0.0, 50, 60 ).delay( 120 ).moveBy( 0.0, 500.0, 360 ); _s.addChild( _tmp ); } } }",
+      "_move" : "function( _s, _e ){  }"
+    },
+    "parts_0010": {
+      "_use": true,
+      "_time": 400,
+      "_func": "function( _s, _e ){ var _tmp; for ( var i = 0; i < 3; i++ ){ _tmp = GetNoUseEnemy(); if ( _tmp !== null ){ _tmp._params._use = true; _tmp.tl.clear(); _tmp.tl.moveTo( 100.0 + (50.0 * i), 5.0, 0.0).moveBy( 0.0, 50, 60 ).delay( 120 ).moveBy( 0.0, 500.0, 360 ); _s.addChild( _tmp ); } } }",
+      "_move" : "function( _s, _e ){  }"
+    }
+  }
+}
