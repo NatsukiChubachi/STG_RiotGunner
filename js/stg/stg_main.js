@@ -5,6 +5,8 @@
 var _gGame;
 var _gScene;
 var _gCommon;
+var _gManager;
+var _gClass;
 
 var _gLayerGroup = [];
 for ( var i=0; i<10; i++ ) _gLayerGroup[i] = null;
@@ -26,7 +28,10 @@ var _gCreateEffectUnitBase;
 
 var _gStageScript = null;
 
-// 使用していない敵を取得する
+/**
+ * 使用していない敵を取得する
+ * @returns {_gCreateEnemyUnitBase|GetNoUseEnemy._tmp}
+ */
 GetNoUseEnemy = function()
 {
     var _iCount = _gCreateEnemyUnitBase.length;
@@ -43,16 +48,19 @@ GetNoUseEnemy = function()
     return null;
 };
 
-// 使用していない敵弾を取得する
+/**
+ * 使用していない敵弾を取得する
+ * @returns {_gCreateEnemyUnitBase|GetNoUseEnemyBullet._tmp}
+ */
 GetNoUseEnemyBullet = function()
 {
-    var _iCount = _gCreateEnemyUnitBase.length;
+    var _iCount = _gCreateBulletEnemyUnitBase.length;
     for ( var i = 0; i < _iCount; i++ )
     {
-        var _tmp = _gCreateEnemyUnitBase[ i ];
+        var _tmp = _gCreateBulletEnemyUnitBase[ i ];
         if ( _tmp._params._use === false )
         {
-            _tmp._script.tl.clear();
+            _tmp.tl.clear();
             return _tmp;
         }
     }
@@ -60,7 +68,10 @@ GetNoUseEnemyBullet = function()
     return null;
 };
     
-// 使用していないエフェクトを取得する
+/**
+ * 使用していないエフェクトを取得する
+ * @returns {GetNoUseEffect._tmp|_gCreateEffectUnitBase}
+ */
 GetNoUseEffect = function()
 {
     var _iCount = _gCreateEffectUnitBase.length;
@@ -75,6 +86,43 @@ GetNoUseEffect = function()
     }
 
     return null;
+};
+
+/**
+ * エフェクトの生成
+ * @param {type} _object
+ * @returns {undefined}
+ */
+gCreateEffect_000 = function( _object )
+{
+    // エフェクトの作成
+    for ( k = 0; k < 6; k++ )
+    {
+        var _tmp = GetNoUseEffect();
+        if ( _tmp !== null )
+        {
+            var _sprite = _tmp._sprite;
+
+            _tmp.x = _object.x;
+            _tmp.y = _object.y;
+
+            _sprite.scale( 3.0, 3.0 );
+            _sprite.opacity = 0.75;
+            _sprite.compositeOperation = "lighter";
+            _tmp._params._use = true;
+            var _randAngle = Math.random() * 360.0;
+
+            _tmp.tl.clear();
+            _tmp.tl
+                    .scaleTo( 0.0, 0.0, 20 ).and().moveBy( 100*Math.cos(_randAngle), 100*Math.sin(_randAngle), 20 )
+                    .then(function(){ 
+                        _gLayerGroup[ _gDefLayerIdStg ].removeChild( this ); 
+                    });
+
+            _gUnitBaseFactory_Effect.SetEffect_0000(_tmp);
+            _gLayerGroup[ _gDefLayerIdStg ].addChild( _tmp );
+        }
+    }
 };
 
 /**
@@ -98,6 +146,7 @@ var CStgMain = function()
         _gGame = this._game;
         _gScene = this._scene;
         _gCommon = this._common;
+        _gClass = this;
         
         // レイヤーグループ初期化
         for ( var i=0; i<10; i++ )
@@ -119,6 +168,7 @@ var CStgMain = function()
         _manager._params._timer = 0;
         _manager.addEventListener( "enterframe", this.ManagerEnterFrame );
         this._scene.addChild( _manager );
+        _gManager = _manager;
         
         // 画面上部フレーム
         var _surface = this._common.CreateSurface( 250, 250 );
@@ -126,10 +176,31 @@ var CStgMain = function()
         _frame.image = _gGame.assets[ "dat/stg/frame_top.png" ];
         this._scene.addChild( _frame );
         
-        // ラベル作成
-        var lblMsg = this._common.CreateLabel( 10, 10, "STG Main Page." );
+        // スコア
+        var lblMsg = this._common.CreateLabel( 10, 10, "Score : -----" );
+        lblMsg.addEventListener("enterframe", function()
+        {
+            this.text = "Score: " + _gManager._params._timer;
+        });
+        this._scene.addChild( lblMsg );
+        
+        // ハイスコア
+        var lblMsg = this._common.CreateLabel( 10, 30, "HighScore : 10000" );
+        lblMsg.addEventListener("enterframe", function()
+        {
+            this.text = "High Score: " + _gManager._params._timer;
+        });
         this._scene.addChild( lblMsg );
 
+        // タイム
+        var lblMsg = this._common.CreateLabel( 10, 50, "Timer : -----" );
+        lblMsg.addEventListener("enterframe", function()
+        {
+            this.text = "Timer: " + _gManager._params._timer;
+        });
+        this._scene.addChild( lblMsg );
+
+        
         // ラベル作成
         this._score = this._common.CreateLabel( 10, 30, "" );
         this._scene.addChild( this._score );
@@ -154,11 +225,8 @@ var CStgMain = function()
     // マネージャ処理 (EnterFrame)
     this.ManagerEnterFrame = function()
     {
-        this._parent._value = this._parent._value + 1;
-        this._parent._score.text = "score : " + this._parent._value;
-        
         this._params._timer++;
-        
+       
         // TODO:
         // プレイヤーと敵のあたり判定
         // プレイヤーと敵弾のあたり判定
@@ -185,13 +253,18 @@ var CStgMain = function()
             // スプライト位置と範囲であたり判定を行う
             if ( _enemy[ i ]._sprite.within( _player._sprite, _player._params._hit_circle ) )
             {
+                // ライフの減少
+                _enemy[ i ]._params._life -= _player._params._attack;
+                
                 // 敵の消失
                 _enemy[ i ]._params._use = false;
                 _group.removeChild( _enemy[ i ] );
                 
                 // プレイヤーの消失
                _group.removeChild( _player );
-                // alert("AAAA");
+               
+                // エフェクトの作成
+                gCreateEffect_000( _enemy[ i ] );
             }
         }
         
@@ -208,6 +281,9 @@ var CStgMain = function()
                 
                 // プレイヤーの消失
                 _group.removeChild( _player );
+
+                // エフェクトの作成
+                gCreateEffect_000( _bullet_enemy[ i ] );
             }
         }
         
@@ -222,43 +298,29 @@ var CStgMain = function()
                 
                 if ( _enemy[ j ]._sprite.within( _bullet_player[ i ]._sprite, _bullet_player[ i ]._params._hit_circle + _enemy[ j ]._params._hit_circle ) )
                 {
+                    // ライフの減少
+                    _v = _bullet_player[ i ]._params._attack;
+                    _enemy[ j ]._params._life -= _bullet_player[ i ]._params._attack;
+                    
                     // プレイヤー弾の消失
                     _bullet_player[ i ]._params._use = false;
                     _group.removeChild( _bullet_player[ i ] );
                     
                     // 敵の消失
-                    _enemy[ j ]._params._use = false;
-                    _group.removeChild( _enemy[ j ] );
-                    
-                    // エフェクトの作成
-                    for ( k = 0; k < 6; k++ )
+                    if ( _enemy[ j ]._params._life <= 0 )
                     {
-                        var _tmp = GetNoUseEffect();
-                        if ( _tmp !== null )
-                        {
-                            var _sprite = _tmp._sprite;
-                            
-                            _tmp.x = _enemy[ j ].x;
-                            _tmp.y = _enemy[ j ].y;
-                           
-                            _sprite.scale( 3.0, 3.0 );
-                            _sprite.opacity = 0.75;
-                            _sprite.compositeOperation = "lighter";
-                            _tmp._params._use = true;
-                            var _randAngle = Math.random() * 360.0;
-                            
-                            _sprite.tl.clear();
-                            _sprite.tl.scaleTo( 0.0, 0.0, 20 ).and().moveBy( 100*Math.cos(_randAngle), 100*Math.sin(_randAngle), 20 );
-                            
-                            _gUnitBaseFactory_Effect.SetEffect_0000(_tmp);
-                            _group.addChild( _tmp );
-                        }
-                    }
+                        _enemy[ j ]._params._use = false;
+                        _group.removeChild( _enemy[ j ] );
+                        
+                        // エフェクトの作成
+                        gCreateEffect_000( _enemy[j] );
+                    }                    
                 }
             }
         }
         
         // ステージ構成
+        /*
         if ( _gStageScript !== null )
         {
             var _group = _gLayerGroup[ _gDefLayerIdStg ];
@@ -275,6 +337,18 @@ var CStgMain = function()
                 }
             }
         }
+        */
+       
+        for ( var key in _gStgStage00 )
+        {
+            var _script = _gStgStage00[ key ];
+            if ( _script._use === true && 
+                 _script._time === this._params._timer
+                 )
+            {
+                _script._func( _group, _script );
+            }
+        }    
     };
 
     return this;

@@ -39,6 +39,10 @@ CStgUnitBaseFactory.prototype.CreateUnit = function( _posX, _posY )
     _unitGroup._params = [];
     _unitGroup._params._speed = this._params._speed;
     _unitGroup._params._bullet = this._bullet;
+    
+    _unitGroup._params._life = 1;
+    _unitGroup._params._attack = 10;
+    _unitGroup._params._attrib = 0;
 
     // 移動操作
     _unitGroup.ExecMove = null;

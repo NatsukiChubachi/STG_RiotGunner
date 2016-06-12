@@ -31,17 +31,17 @@ CStgBgEntityUnitBaseFactory.prototype.CreateUnit = function()
     _unitTable[ 1 ].ExecAnim = this.ExecAnim;
     _unitTable[ 2 ].ExecAnim = this.ExecAnim;
 
-    _unitTable[ 0 ]._sprite.moveTo( 0.0, -490.0 );
-    _unitTable[ 1 ]._sprite.moveTo( 0.0,   10.0 );
+    _unitTable[ 0 ]._sprite.moveTo( 0.0, -500.0 );
+    _unitTable[ 1 ]._sprite.moveTo( 0.0,   0.0 );
     _unitTable[ 2 ]._sprite.moveTo( 0.0, 500.0 );
 
     _unitTable[ 0 ]._sprite.opacity = 0.75;
     _unitTable[ 1 ]._sprite.opacity = 0.75;
     _unitTable[ 2 ]._sprite.opacity = 0.75;
 
-    _unitTable[ 0 ]._sprite.tl.moveTo( 0.0, 0.0, 180 ).moveTo( 0.0, -490.0, 0 ).loop();
-    _unitTable[ 1 ]._sprite.tl.moveTo( 0.0, 490.0, 180 ).moveTo( 0.0, 10.0, 0 ).loop();
-    _unitTable[ 2 ]._sprite.tl.moveTo( 0.0, 990.0, 180 ).moveTo( 0.0, 500.0, 0 ).loop();
+    _unitTable[ 0 ]._sprite.tl.moveTo( 0.0, 0.0, 180 ).moveTo( 0.0, -500.0, 0 ).loop();
+    _unitTable[ 1 ]._sprite.tl.moveTo( 0.0, 500.0, 180 ).moveTo( 0.0, 0.0, 0 ).loop();
+    _unitTable[ 2 ]._sprite.tl.moveTo( 0.0, 1000.0, 180 ).moveTo( 0.0, 500.0, 0 ).loop();
 
     return _unitTable;
 };

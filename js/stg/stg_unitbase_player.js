@@ -37,6 +37,10 @@ CStgPlayerUnitBaseFactory.prototype.CreateUnit = function( _posX, _posY )
 
     _unit.scaleX = 0.5;
     _unit.scaleY = 0.5;
+    
+    _unit._params._life = 1;
+    _unit._params._attack = 10;
+    _unit._params._attrib = 0;
 
     return _unit;
 };
