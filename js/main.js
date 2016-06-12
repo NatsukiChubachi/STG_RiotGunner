@@ -22,6 +22,7 @@ window.onload = function(){
     _gAssetImage.Unit0000_01 = "dat/stg/unit_0000_0001.png";
     _gAssetImage.Unit0010_00 = "dat/stg/unit_0010_0000.png";
     _gAssetImage.Unit0010_01 = "dat/stg/unit_0010_0001.png";
+    _gAssetImage.Square000 = "dat/stg/square000.png";
         
     game.preload(                           // ファイルのプリロード
         _gAssetImage.BackGround0,
