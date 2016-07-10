@@ -2,6 +2,8 @@
  * STGメイン部分
  */
 // グローバル変数
+var _gStgStage00;
+
 var _gGame;
 var _gScene;
 var _gCommon;
@@ -339,16 +341,19 @@ var CStgMain = function()
         }
         */
        
-        for ( var key in _gStgStage00 )
+        if ( _gStgStage00 !== null )
         {
-            var _script = _gStgStage00[ key ];
-            if ( _script._use === true && 
-                 _script._time === this._params._timer
-                 )
+            for ( var key in _gStgStage00 )
             {
-                _script._func( _group, _script );
-            }
-        }    
+                var _script = _gStgStage00[ key ];
+                if ( _script._use === true && 
+                     _script._time === this._params._timer
+                     )
+                {
+                    _script._func( _group, _script );
+                }
+            }    
+        }
     };
 
     return this;
