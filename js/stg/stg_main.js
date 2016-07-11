@@ -247,13 +247,13 @@ var CStgMain = function()
         for ( i = 0; i < this._parent._defCountEnemy; i++ )
         {
             // 敵が使用されていない場合は判定しない
-            if ( _enemy[ i ]._params._use === false )
-            {
-                continue;
-            }
+            if ( _enemy[ i ]._params._use === false ) continue;
+            
+            // プレイヤーが未使用の場合は判定しない
+            if ( _player._params._use === false ) continue;
             
             // スプライト位置と範囲であたり判定を行う
-            if ( _enemy[ i ]._sprite.within( _player._sprite, _player._params._hit_circle ) )
+            if ( _enemy[ i ]._sprite.within( _player._sprite, _player._params._hit_circle+3 ) )
             {
                 // ライフの減少
                 _enemy[ i ]._params._life -= _player._params._attack;
@@ -264,6 +264,7 @@ var CStgMain = function()
                 
                 // プレイヤーの消失
                _group.removeChild( _player );
+               _player._params._use = false;
                
                 // エフェクトの作成
                 gCreateEffect_000( _enemy[ i ] );
@@ -274,6 +275,7 @@ var CStgMain = function()
         for ( i = 0; i < this._parent._defCountBullet; i++ )
         {
             if ( _bullet_enemy[ i ]._params._use === false ) continue;
+            if ( _player._params._use === false ) continue;
             
             if ( _player._sprite.within( _bullet_enemy[ i ]._sprite, _bullet_enemy[ i ]._params._hit_circle ) )
             {

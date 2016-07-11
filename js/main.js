@@ -32,7 +32,8 @@ window.onload = function(){
         _gAssetImage.Unit0000_00,
         _gAssetImage.Unit0000_01,
         _gAssetImage.Unit0010_00,
-        _gAssetImage.Unit0010_01
+        _gAssetImage.Unit0010_01,
+        _gAssetImage.Square000
         ); 
     
     // ゲームのOnLoad時の処理

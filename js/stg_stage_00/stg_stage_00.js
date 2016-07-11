@@ -28,6 +28,7 @@ _gStgStage00 = {
               if ( _tmp !== null )
               { 
                   _tmp._params._use = true;
+                  _gUnitBaseFactory_Enemy.SetEnemy_Square000( _tmp );
                   _tmp.tl.clear();
                   _tmp.tl
                           .moveTo( 50.0 + (30.0 * i), -25.0, 0.0)

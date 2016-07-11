@@ -65,6 +65,7 @@ CStgEnemyUnitBaseFactory.prototype.ExecAnim = function()
     var _game  = _gGame;
     var _fps   = 1.0 / _game.fps;
 
+    // アニメーションタイムの推移
     this._params._anim_time += _fps;
     if ( this._params._anim_time > 0.05 )
     {
@@ -76,6 +77,7 @@ CStgEnemyUnitBaseFactory.prototype.ExecAnim = function()
         }
     }
 
+    // アニメーション
     switch( this._params._anim_index )
     {
     case 0:
@@ -106,4 +108,27 @@ CStgEnemyUnitBaseFactory.prototype.ShootNormal = function()
 {
 };
 
+CStgEnemyUnitBaseFactory.prototype.SetEnemy_Square000 = function( _unit )
+{
+    _unit.ExecAnim = this.ExecAnim_Square000;    
+};
+
+CStgEnemyUnitBaseFactory.prototype.ExecAnim_Square000 = function()
+{
+    // 変数の取得
+    var _game  = _gGame;
+    var _fps   = 1.0 / _game.fps;
+    
+    // アニメーションタイムの推移
+    /*
+    this._params._anim_time += 10.0 * _fps;
+    if ( this._params._anim_time > 360.0 )
+    {
+        this._params._anim_time -= 360.0;
+    }
+    */
+    
+    this._sprite.image = _gGame.assets[ _gAssetImage.Square000 ];
+    this._sprite.rotate( 360.0 * _fps );
+};
 
